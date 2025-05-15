@@ -1,6 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ulid } from 'ulid';
-@Entity()
+import { Token } from './token.entity';
+
+@Entity('credential')
 export class Credential {
   @PrimaryColumn('varchar', { length:26, default: () => `'${ulid()}'` })
   credential_id: string;
@@ -22,4 +24,7 @@ export class Credential {
   created: Date;
   @UpdateDateColumn()
   updated: Date;
+
+  @OneToMany(() => Token, token => token.credential)
+  tokens: Token[];
 }

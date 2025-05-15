@@ -1,31 +1,47 @@
-import { User, configManager } from '@common/config';
 import { Module } from '@nestjs/common';
+// Import de Mongoose pour MongoDB
+import { MongooseModule } from '@nestjs/mongoose';
+// Import de TypeORM pour PostgreSQL
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CryptocurrencyModule } from 'model/Cryptocurrency/cryptocurrency.module';
-import { ForumModule } from 'model/Forum/forum.module';
-import { Subscription } from 'model/Subscription/subscription.entity';
-import { SubscriptionModule } from 'model/Subscription/subscription.module';
-import { TransactionModule } from 'model/Transaction/transaction.module';
-import { UserModule } from 'model/User/user.module';
-import { WalletModule } from 'model/Wallet/wallet.module';
-import { SecurityModule } from '@feature/security';
+import { typeOrmConfig } from '../../common/config/typeorm.config';
+import { UserModule } from '../../model/User/user.module';
+import { EventModule } from '../../model/Event/event.module';
+import { MessageModule } from '../../model/Message/message.module';
+import { ReviewModule } from '../../model/Review/review.module';
+import { NotificationModule } from '../../model/Notification/notification.module';
+import { PaymentModule } from '../../model/Payment/payment.module';
+import { BadgeModule } from '../../model/Badge/badge.module';
+import { DocumentModule } from '../../model/Document/document.module';
+import { SecurityModule } from '../security/security.module';
+import { AccountModule } from '../../model/Account/account.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(configManager.getTypeOrmConfig(),),
-    TypeOrmModule.forFeature([User]),
-
+    // Choix dynamique de la base de données selon l'environnement
+    // En production (NODE_ENV=production), on utilise MongoDB (Mongoose)
+    // En développement/local, on utilise PostgreSQL (TypeORM)
+    ...(process.env.NODE_ENV === 'production'
+      ? [
+          // Connexion à MongoDB Atlas (production)
+          MongooseModule.forRoot(process.env.MONGO_URI),
+        ]
+      : [
+          // Connexion à PostgreSQL (local)
+          TypeOrmModule.forRoot(typeOrmConfig),
+        ]),
+    // Modules métier communs
     UserModule,
-    WalletModule,
-    SubscriptionModule,
-    TransactionModule,
-    CryptocurrencyModule,
-    ForumModule,
-    SecurityModule
-
-
-
-
+    EventModule,
+    MessageModule,
+    ReviewModule,
+    NotificationModule,
+    PaymentModule,
+    BadgeModule,
+    DocumentModule,
+    SecurityModule,
+    AccountModule
   ],
+  controllers: [],
+  providers: []
 })
 export class AppModule {}

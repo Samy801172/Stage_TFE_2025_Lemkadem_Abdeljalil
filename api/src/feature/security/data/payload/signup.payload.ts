@@ -15,6 +15,14 @@ export class SignupPayload {
   @ApiProperty({ description: 'Email field is required.' })
   mail: string;
 
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Nom de famille de l\'utilisateur.' })
+  nom: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Prénom de l\'utilisateur.' })
+  prenom: string;
+
   @IsOptional()
   @ApiProperty({ required: false, description: 'Google hash is optional.' })
   googleHash?: string;
@@ -22,4 +30,8 @@ export class SignupPayload {
   @IsOptional()
   @ApiProperty({ required: false, description: 'Facebook hash is optional.' })
   facebookHash?: string;
+
+  @IsOptional()
+  @ApiProperty({ required: false, description: "Nom de l'entreprise de l'utilisateur." })
+  entreprise?: string;
 }

@@ -1,5 +1,5 @@
 import { ApiException } from "@common/config";
-import { ApiCodeResponse } from "common/config/api/enum";
+import { ApiCodeResponse } from "@common/config/api/enum";
 
 
 

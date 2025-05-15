@@ -4,15 +4,24 @@
 /dist
 /tmp
 /out-tsc
-/bazel-out
+
+# Dependencies
+/node_modules
+
+# IDE
+/.idea
+/.vscode
+/.angular
+
+# System Files
+.DS_Store
+Thumbs.db
 
 # Node
-/node_modules
 npm-debug.log
 yarn-error.log
 
 # IDEs and editors
-.idea/
 .project
 .classpath
 .c9/
@@ -36,7 +45,3 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
-
-# System files
-.DS_Store
-Thumbs.db

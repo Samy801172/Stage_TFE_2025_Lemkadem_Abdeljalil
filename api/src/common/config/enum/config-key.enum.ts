@@ -11,7 +11,7 @@ export enum ConfigKey {
   APP_BASE_URL = 'APP_BASE_URL',
   APP_MODE = 'APP_MODE',
   APP_PORT = 'APP_PORT',
-  DB_TYPE='DB_TYPE',
-  DB_SYNC='DB_SYNC'
+  DB_TYPE = 'DB_TYPE',
+  DB_SYNC = 'DB_SYNC'
 }
 export const configMinimalKeys: ConfigKey[] = Object.keys(ConfigKey) as ConfigKey[];

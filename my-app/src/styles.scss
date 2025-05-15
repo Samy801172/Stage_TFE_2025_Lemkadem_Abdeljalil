@@ -1,4 +1,5 @@
 @import './assets/css/normalize.css';
+@import '@fortawesome/fontawesome-free/css/all.css';
 
 /* You can add global styles to this file, and also import other style files */
 body{
@@ -96,5 +97,29 @@ h1 {
   font-size: 1.5em;
   margin: 0.5em 0;
 }
+
+/* Toast notification global, toujours visible en haut à droite */
+.toast {
+  position: fixed !important;
+  top: 30px !important;
+  right: 30px !important;
+  z-index: 99999 !important;
+  padding: 1.5rem 2.5rem;
+  border-radius: 12px;
+  color: #fff !important;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  min-width: 300px;
+  text-align: center;
+  opacity: 0.98;
+  background: #27ae60 !important; /* vert pour le succès */
+  display: block !important;
+  pointer-events: auto !important;
+}
+.toast.success { background: #27ae60 !important; }
+.toast.error { background: #e74c3c !important; }
+.toast.info { background: #3498db !important; }
+.toast.warning { background: #f1c40f !important; color: #222 !important; }
 
 

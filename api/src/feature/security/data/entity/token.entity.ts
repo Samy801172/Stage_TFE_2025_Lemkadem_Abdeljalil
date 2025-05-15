@@ -1,17 +1,22 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm';
+import { Credential } from './credential.entity';
 import { ulid } from 'ulid';
-import { Credential, SignupPayload} from "@feature/security/data";
 
-
-@Entity()
+@Entity('token')
 export class Token {
-  @PrimaryColumn('varchar', { length:26, default: () => `'${ulid()}'` })
+  @PrimaryColumn('varchar', { length: 26, default: () => `'${ulid()}'` })
   token_id: string;
-  @Column({nullable: false})
+
+  @Column()
   token: string;
-  @Column({nullable: false})
+
+  @Column()
   refreshToken: string;
-  @OneToOne(() => Credential,{eager:true})
-  @JoinColumn({name: 'credential_id_fk'})
-  credential: Credential
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @ManyToOne(() => Credential)
+  @JoinColumn({ name: 'credential_id' })
+  credential: Credential;
 }
