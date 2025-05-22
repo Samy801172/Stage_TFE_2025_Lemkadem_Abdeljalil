@@ -47,10 +47,10 @@
     "stripe": "^17.7.0",
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.20",
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "@nestjs/cli": "^10.0.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.2",
