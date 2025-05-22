@@ -1,3 +1,3 @@
 export *from './security.module';
-export *from './guard';
+export *from './guards';
 

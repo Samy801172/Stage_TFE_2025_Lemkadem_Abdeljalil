@@ -1,69 +1,86 @@
-import { Controller, Get, Put, Delete, Param, Post, Body, NotFoundException, ValidationPipe, BadRequestException, UseGuards } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
-import { UserService } from './ user.service';
-import { User } from './user.entity';
-import { JwtGuard } from '@feature/security';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, NotFoundException, Patch, Req } from '@nestjs/common';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from '@feature/security/guards/jwt-auth.guard';
+import { RolesGuard } from '@feature/security/guards/roles.guard';
+import { Roles } from '@feature/security/decorators/roles.decorator';
+import { UserRole } from './entities/user-role.enum';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
 
-@ApiTags('users')
+@ApiTags('Users')
+@ApiBearerAuth()
 @Controller('users')
-
-
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
+  }
+
   @Get()
-  @ApiResponse({ status: 200, description: 'List of all users.', type: [User] })
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({ status: 200, description: 'User found.', type: User })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  async findOne(@Param('id') id: number): Promise<User> {
-    const user = await this.userService.findOne(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
-  }
-
-  @Post('create')
-  @ApiResponse({ status: 201, description: 'The user has been successfully created.', type: User })
-  @ApiResponse({ status: 400, description: 'Invalid input data.' })
-  async create(@Body(ValidationPipe) createUserDto: CreateUserDto): Promise<User> {
-
-    // Vérifiez si le mot de passe est défini
-    if (!createUserDto.password) {
-      throw new BadRequestException('Le mot de passe est requis');
-    }
-
-    // Hash and salt the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
-    createUserDto.password = hashedPassword;
-
-    return this.userService.create(createUserDto);
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id') id: string) {
+    return await this.userService.findOne(id);
   }
 
   @Put(':id')
-  @ApiResponse({ status: 200, description: 'The user has been successfully updated.', type: User })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  async update(@Param('id') id: number, @Body(ValidationPipe) updateUserDto: Partial<User>): Promise<User> {
-    const user = await this.userService.update(id, updateUserDto);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
+  @UseGuards(JwtAuthGuard)
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    // Update the user information
+    await this.userService.put(id, updateUserDto);
+
+    // A confirmation email will be sent to the user after the update
+    return { code: 'api.common.success', result: true };
   }
 
   @Delete(':id')
-  @ApiResponse({ status: 204, description: 'The user has been successfully deleted.' })
-  @ApiResponse({ status: 404, description: 'User not found.' })
-  async delete(@Param('id') id: number): Promise<void> {
-    await this.userService.delete(id);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async remove(@Param('id') id: string) {
+    console.log('[UserController] Appel de la route DELETE /users/' + id);
+    try {
+      await this.userService.remove(id);
+      return { code: 'api.common.success', result: true };
+    } catch (error) {
+      if (error.message === 'Utilisateur déjà désactivé') {
+        return { code: 'api.user.already_deactivated', message: 'Utilisateur déjà désactivé', result: false };
+      }
+      throw error;
+    }
+  }
+
+  @Patch(':id/restore')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async restore(@Param('id') id: string) {
+    try {
+      await this.userService.restore(id);
+      return { code: 'api.common.success', result: true };
+    } catch (error) {
+      if (error.message === 'Utilisateur déjà actif') {
+        return { code: 'api.user.already_active', message: 'Utilisateur déjà actif', result: false };
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Récupère la liste des contacts potentiels pour l'utilisateur authentifié
+   * @returns Liste des contacts (utilisateurs actifs)
+   */
+  @Get('contacts')
+  @UseGuards(JwtAuthGuard)
+  async getContacts(@Req() req) {
+    return this.userService.findContacts(req.user.userId);
   }
 }

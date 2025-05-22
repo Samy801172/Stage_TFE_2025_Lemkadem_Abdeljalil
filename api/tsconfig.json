@@ -1,25 +1,25 @@
 { "strict": true,
   "compilerOptions": {
     "module": "commonjs",
-
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
+    "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
     "paths": {
-      "@common/*": ["./common/*"],
-      "@feature/*": ["./feature/*"]
+      "@model/*": ["src/model/*"],
+      "@feature/*": ["src/feature/*"],
+      "@common/*": ["src/common/*"]
     }
   },
-  "incremental": true,
   "watchAssert": true,
   "noEmitOnError": true,
-  "skipLibCheck": true,
   "strictNullChecks": false,
   "noImplicitAny": false,
   "strictBindCallApply": false,
