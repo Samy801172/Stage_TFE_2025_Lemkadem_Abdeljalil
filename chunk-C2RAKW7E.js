@@ -1,0 +1,1 @@
+var e={production:!0,apiUrl:"https://backend-tfe-lemkadem-jj6x.onrender.com/api",stripe:{publishableKey:"pk_test_51R5qVlCKECr1cYK1BbpbQwLBLDwMyxSGlk1A6EWGuPgEBQk0OKJQu9h0kECev2N3ZbYPI483cPajUkjD5l6DkjMW00CEohJsBq"}};export{e as a};
